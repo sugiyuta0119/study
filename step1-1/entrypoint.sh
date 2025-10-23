@@ -13,9 +13,7 @@ function cleanup {
     echo "メインプロセスの終了処理に入ります"
     kill -SIGTERM "$APP_PID"
     echo "メインプロセスの終了待ちです"
-    while kill -0 "$APP_PID" 2>/dev/null; do
-      sleep 1
-    done
+    wait $APP_PID || true
     echo "メインプロセスが終了しました"
   fi
   
@@ -43,14 +41,9 @@ APP_PID=$!
 
 # --- メインプロセスの終了を待機 ---
 # waitコマンドでメインプロセスが終了するまで待機
-while kill -0 "$APP_PID" 2>/dev/null; do
-#  echo "ここループ回ってます"
-  sleep 5
-done
-
+wait $APP_PID || true
 echo "何らかの理由でメインプロセスが終了しました"
 
 # スクリプトのクリーンアップ関数が呼ばれなかった場合に、
 # メインプロセスの終了コードで終了
 exit $?
-
